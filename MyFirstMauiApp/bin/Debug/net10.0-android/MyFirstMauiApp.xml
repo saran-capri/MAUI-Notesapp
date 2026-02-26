@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyFirstMauiApp</name>
+    </assembly>
+    <members>
+        <member name="T:MyFirstMauiApp.Converters.BoolToColorConverter">
+            <summary>
+            Converts a bool to one of two Color values.
+            ConverterParameter="trueHex|falseHex"  e.g.  "#F59E0B|#4F46E5"
+            </summary>
+        </member>
+        <member name="T:MyFirstMauiApp.Resource">
+            <summary>
+            Android Resource Designer class.
+            Exposes the Android Resource designer assembly into the project Namespace.
+            </summary>
+        </member>
+    </members>
+</doc>

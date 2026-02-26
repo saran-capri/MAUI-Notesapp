@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MyFirstMauiApp.ViewModels"
+             xmlns:models="clr-namespace:MyFirstMauiApp.Models"
+             xmlns:conv="clr-namespace:MyFirstMauiApp.Converters"
+             x:Class="MyFirstMauiApp.Views.NotesPage"
+             x:DataType="vm:NotesViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
+
+    <ContentPage.Resources>
+        <conv:BoolToIconConverter x:Key="BoolToIcon"/>
+        <conv:BoolToColorConverter x:Key="BoolToColor"/>
+        <conv:StringNotEmptyConverter x:Key="StringNotEmpty"/>
+    </ContentPage.Resources>
+
+    <Grid>
+
+        <!-- Main content -->
+        <Grid RowDefinitions="Auto,Auto,*">
+
+            <!-- Header with gradient -->
+            <Grid Grid.Row="0" Padding="24,52,24,32">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#4F46E5" Offset="0.0"/>
+                        <GradientStop Color="#3730A3" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Ellipse WidthRequest="160" HeightRequest="160"
+                         HorizontalOptions="End" VerticalOptions="Start"
+                         TranslationX="50" TranslationY="-50"
+                         Fill="White" Opacity="0.06"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="{Binding Greeting}" TextColor="#FFFFFFAA" FontSize="13" FontFamily="OpenSansRegular"/>
+                        <Label Text="My Notes" TextColor="White" FontSize="30" FontFamily="OpenSansSemibold"/>
+                        <Label Text="{Binding CurrentDate}" TextColor="#FFFFFF88" FontSize="12" Margin="0,2,0,0"/>
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1" WidthRequest="52" HeightRequest="52"
+                            StrokeShape="Ellipse" BackgroundColor="#FFFFFF18"
+                            Stroke="#FFFFFF30" StrokeThickness="1.5" VerticalOptions="Center">
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0">
+                            <Label Text="{Binding Notes.Count}" TextColor="White" FontSize="18"
+                                   FontFamily="OpenSansSemibold" HorizontalOptions="Center"/>
+                            <Label Text="notes" TextColor="#FFFFFF88" FontSize="9" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Search bar overlapping header -->
+            <Border Grid.Row="1" Margin="20,-22,20,0" Padding="4,0"
+                    StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark=#2A2A40}"
+                    StrokeThickness="1">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.10"/>
+                </Border.Shadow>
+                <SearchBar Placeholder="Search notes…" Text="{Binding SearchText}" BackgroundColor="Transparent"/>
+            </Border>
+
+            <!-- Notes list -->
+            <RefreshView Grid.Row="2" IsRefreshing="{Binding IsBusy}"
+                         Command="{Binding LoadNotesCommand}" Margin="0,12,0,0">
+                <CollectionView ItemsSource="{Binding Notes}" SelectionMode="None">
+
+                    <CollectionView.Header>
+                        <Label Text="{Binding NotesHeader}" Margin="24,8,24,4"
+                               FontSize="12" FontFamily="OpenSansSemibold"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                               CharacterSpacing="0.8"/>
+                    </CollectionView.Header>
+
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                             Spacing="12" Margin="40,60">
+                            <Label Text="✏️" FontSize="52" HorizontalOptions="Center"/>
+                            <Label Text="No notes yet" FontSize="18" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="Tap the + button to write your first note"
+                                   FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"
+                                   HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Note">
+                            <SwipeView Margin="16,4">
+
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="Delete" BackgroundColor="#EF4444"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteNoteCommand}"
+                                                   CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+
+                                <SwipeView.LeftItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="{Binding IsPinned, Converter={StaticResource BoolToIcon}, ConverterParameter='Unpin|Pin'}"
+                                                   BackgroundColor="#4F46E5"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.TogglePinCommand}"
+                                                   CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+
+                                <Border StrokeShape="RoundRectangle 14" Stroke="Transparent" Padding="0"
+                                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}">
+                                    <Border.Shadow>
+                                        <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.07"/>
+                                    </Border.Shadow>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectNoteCommand}"
+                                            CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+
+                                    <Grid ColumnDefinitions="5,*">
+                                        <!-- Accent bar: amber=pinned, indigo=normal -->
+                                        <ContentView Grid.Column="0"
+                                                     BackgroundColor="{Binding IsPinned, Converter={StaticResource BoolToColor}, ConverterParameter='#F59E0B|#4F46E5'}"/>
+
+                                        <Grid Grid.Column="1" Padding="14,12" RowDefinitions="Auto,Auto,Auto">
+
+                                            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                                                <Label Grid.Column="0" Text="{Binding Title}"
+                                                       FontFamily="OpenSansSemibold" FontSize="15"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark=#F9FAFB}"
+                                                       LineBreakMode="TailTruncation"/>
+                                                <Label Grid.Column="1" Text="📌" FontSize="13"
+                                                       IsVisible="{Binding IsPinned}" VerticalOptions="Center"/>
+                                            </Grid>
+
+                                            <Label Grid.Row="1" Text="{Binding Preview}" FontSize="13"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}"
+                                                   LineBreakMode="TailTruncation" MaxLines="2" Margin="0,5,0,0"/>
+
+                                            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,8,0,0">
+                                                <Border Grid.Column="0"
+                                                        IsVisible="{Binding Tags, Converter={StaticResource StringNotEmpty}}"
+                                                        StrokeShape="RoundRectangle 6"
+                                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark=#2D2D50}"
+                                                        Stroke="Transparent" Padding="6,2" HorizontalOptions="Start">
+                                                    <Label Text="{Binding Tags}" FontSize="10"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="{StaticResource Primary}"
+                                                           LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </Border>
+                                                <Label Grid.Column="1" Text="{Binding FormattedDate}"
+                                                       FontSize="11" VerticalOptions="Center"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}"/>
+                                            </Grid>
+
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <CollectionView.Footer>
+                        <BoxView HeightRequest="88" Color="Transparent"/>
+                    </CollectionView.Footer>
+
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <!-- FAB -->
+        <Border VerticalOptions="End" HorizontalOptions="End"
+                Margin="0,0,24,36" WidthRequest="58" HeightRequest="58"
+                StrokeShape="Ellipse" Stroke="Transparent">
+            <Border.Shadow>
+                <Shadow Brush="#4F46E5" Offset="0,4" Radius="14" Opacity="0.40"/>
+            </Border.Shadow>
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#6366F1" Offset="0.0"/>
+                    <GradientStop Color="#4F46E5" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Button Text="+" TextColor="White" FontSize="28"
+                    BackgroundColor="Transparent" BorderWidth="0" Padding="0"
+                    Command="{Binding AddNoteCommand}"/>
+        </Border>
+
+    </Grid>
+</ContentPage>

@@ -1,0 +1,1 @@
+-v --force --timestamp=none --sign - /Users/sarankumar/Desktop/MyFirstMauiApp/bin/Release/net10.0-ios/iossimulator-arm64/MyFirstMauiApp.app/libSystem.Security.Cryptography.Native.Apple.dylib

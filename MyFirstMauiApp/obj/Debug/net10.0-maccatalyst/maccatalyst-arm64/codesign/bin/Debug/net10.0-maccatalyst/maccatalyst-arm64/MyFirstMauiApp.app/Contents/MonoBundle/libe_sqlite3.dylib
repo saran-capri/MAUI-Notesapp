@@ -1,0 +1,1 @@
+-v --force --timestamp=none --sign - /Users/sarankumar/Desktop/MyFirstMauiApp/bin/Debug/net10.0-maccatalyst/maccatalyst-arm64/MyFirstMauiApp.app/Contents/MonoBundle/libe_sqlite3.dylib
