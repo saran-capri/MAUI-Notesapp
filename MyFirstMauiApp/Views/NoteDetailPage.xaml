@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MyFirstMauiApp.ViewModels"
+             x:Class="MyFirstMauiApp.Views.NoteDetailPage"
+             x:DataType="vm:NoteDetailViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="True"/>
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Order="Primary" Command="{Binding SaveCommand}"/>
+        <ToolbarItem Text="Delete" Order="Secondary" Command="{Binding DeleteCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0" Padding="0,0,0,32">
+
+            <!-- Title field -->
+            <Border Margin="16,16,16,8"
+                    Padding="16,12"
+                    StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark=#2A2A40}">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.05"/>
+                </Border.Shadow>
+                <Entry Placeholder="Note title"
+                       Text="{Binding NoteTitle}"
+                       FontFamily="OpenSansSemibold"
+                       FontSize="20"
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                       ClearButtonVisibility="WhileEditing"/>
+            </Border>
+
+            <!-- Body editor -->
+            <Border Margin="16,0,16,8"
+                    Padding="16,12"
+                    StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark=#2A2A40}">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.05"/>
+                </Border.Shadow>
+                <Editor Placeholder="Start writing your note…"
+                        Text="{Binding Content}"
+                        AutoSize="TextChanges"
+                        MinimumHeightRequest="180"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"/>
+            </Border>
+
+            <!-- Metadata card: category, tags, pin -->
+            <Border Margin="16,0,16,8"
+                    Padding="4,0"
+                    StrokeShape="RoundRectangle 14"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource CardDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark=#2A2A40}">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,2" Radius="6" Opacity="0.05"/>
+                </Border.Shadow>
+                <VerticalStackLayout>
+
+                    <!-- Category row -->
+                    <Grid Padding="16,14,16,0" ColumnDefinitions="Auto,*">
+                        <Label Grid.Column="0" Text="📁"
+                               FontSize="16" VerticalOptions="Center" Margin="0,0,12,0"/>
+                        <Picker Grid.Column="1"
+                                Title="Category"
+                                ItemsSource="{Binding Categories}"
+                                SelectedItem="{Binding SelectedCategory}"
+                                ItemDisplayBinding="{Binding Name}"/>
+                    </Grid>
+
+                    <BoxView Margin="16,8" HeightRequest="1"
+                             Color="{AppThemeBinding Light={StaticResource Gray100}, Dark=#2A2A40}"/>
+
+                    <!-- Tags row -->
+                    <Grid Padding="16,0,16,0" ColumnDefinitions="Auto,*">
+                        <Label Grid.Column="0" Text="🏷️"
+                               FontSize="16" VerticalOptions="Center" Margin="0,0,12,0"/>
+                        <Entry Grid.Column="1"
+                               Placeholder="Tags (comma-separated)"
+                               Text="{Binding TagsText}"/>
+                    </Grid>
+
+                    <BoxView Margin="16,8" HeightRequest="1"
+                             Color="{AppThemeBinding Light={StaticResource Gray100}, Dark=#2A2A40}"/>
+
+                    <!-- Pin toggle row -->
+                    <Grid Padding="16,4,16,14" ColumnDefinitions="Auto,*,Auto">
+                        <Label Grid.Column="0" Text="📌"
+                               FontSize="16" VerticalOptions="Center" Margin="0,0,12,0"/>
+                        <Label Grid.Column="1" Text="Pin this note"
+                               FontSize="14" VerticalOptions="Center"/>
+                        <Switch Grid.Column="2" IsToggled="{Binding IsPinned}"
+                                VerticalOptions="Center"/>
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
